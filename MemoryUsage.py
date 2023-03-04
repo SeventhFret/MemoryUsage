@@ -12,10 +12,22 @@ system('clear')
 
 class MemoryUsage(QMainWindow):
     def __init__(self):
+        # Initializing parent class
         super().__init__()
+
+        # Setting plot data
+        self.x = [0, 1, 2]
+        self.y = [psutil.virtual_memory().percent for a in range(3)]
+        
         self.mem_data = psutil.virtual_memory()
         self.initUI()
 
+        # Setting up the plot data
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_graph)
+        self.timer.setInterval(1000)
+        self.timer.start()
+        self.update_graph()
 
     def initUI(self):
         # self.setFixedSize(600, 600)
@@ -55,14 +67,13 @@ margin-top: 20%''')
         # ^ PLOTTING ===========================
         pen = pg.mkPen(color=(128, 0, 0), width=5)
         self.plotWidget = pg.PlotWidget(background=None)
-        self.plotWidget.setStyleSheet('''QGraphicsView {border: 4px solid maroon;}''')
+        self.plotWidget.setStyleSheet('''QGraphicsView {border: 3px solid maroon;}''')
         self.plotWidget.setMouseEnabled(x=False, y=False)
-        # self.plotWidget()
 
-        self.x = [0, 1, 2]
-        self.y = [psutil.virtual_memory().percent for a in range(3)]
+        
 
-        self.plotWidget.plot(self.x, self.y, pen=pen, fillLevel=True)
+
+        self.data_line = self.plotWidget.plot(self.x, self.y, pen=pen, fillLevel=True)
         self.plotWidget.setYRange(min=1, max=100)
         self.plotWidget.setTitle('Memory Usage Percentage')
         self.plotWidget.showGrid(x=True, y=True)
@@ -71,12 +82,14 @@ margin-top: 20%''')
         self.mainLayout.addWidget(self.appTitle)
         self.mainLayout.addLayout(self.firstLineLayout)
         self.mainLayout.addWidget(self.plotWidget)
-        print(psutil.virtual_memory())
-        print(34359738368 / 32768)
-        print()
+
 
     def update_graph(self):
-        pass 
+        self.x.append(self.x[len(self.x) - 1] + 1)
+        self.y.append(psutil.virtual_memory().percent)
+        self.data_line.setData(self.x, self.y)
+        
+
         
 
 if __name__ == "__main__":
