@@ -1,6 +1,6 @@
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QLabel, QPushButton, QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget
-from PySide6.QtGui import Qt, QFont
+from PySide6.QtGui import Qt, QFont, QPixmap, QIcon
 from os import system
 import pyqtgraph as pg
 import sys
@@ -35,9 +35,9 @@ class MemoryUsage(QMainWindow):
         self.timer.start()
 
     def initUI(self):
-        # self.setFixedSize(600, 600)
+        self.setFixedSize(600, 600)
         self.setUpdatesEnabled(True)
-        self.resize(600, 600)
+        # self.resize(600, 600)
         self.setWindowTitle('Memory Usage')
         self.setStyleSheet('''background-color: black;''')
 
@@ -90,10 +90,21 @@ margin-top: 20%;''')
         self.secondLineText2.setStyleSheet('margin-top: 20%;')
         self.secondLineText2.setAlignment(Qt.AlignCenter)                                          
 
+        self.secondLineButton = QPushButton('')
+        self.secondLineButton.setIcon(QPixmap('./info.png'))
+        self.secondLineButton.setToolTip('''The used value is not necessarily equal to the difference
+between total and available, because some memory
+may be occupied by processes that have not yet
+freed it.''')
+        self.secondLineButton.setStyleSheet('margin-top: 10%;')
+        # self.secondLineButton.setIconSize(self.secondLineButton.size())
+
+
         self.secondLineLayout = QHBoxLayout()
         self.secondLineLayout.setAlignment(Qt.AlignCenter)
         self.secondLineLayout.addWidget(self.secondLineText)
         self.secondLineLayout.addWidget(self.secondLineText2)
+        self.secondLineLayout.addWidget(self.secondLineButton)
 
 
 
@@ -109,10 +120,32 @@ margin-top: 20%;''')
         self.thirdLineText2.setStyleSheet('margin-top: 20%;')
         self.thirdLineText2.setAlignment(Qt.AlignCenter)                                          
 
+        
+
         self.thirdLineLayout = QHBoxLayout()
         self.thirdLineLayout.setAlignment(Qt.AlignCenter)
         self.thirdLineLayout.addWidget(self.thirdLineText)
         self.thirdLineLayout.addWidget(self.thirdLineText2)
+
+
+
+        # ^ FOURTH LINE LABELS
+        self.fourthLineText = QLabel('Percentage:')
+        self.fourthLineText.setFont(self.font25)
+        self.fourthLineText.setStyleSheet('''color: maroon;
+margin-top: 20%;''')
+        self.fourthLineText.setAlignment(Qt.AlignCenter)                                          
+
+        self.fourthLineText2 = QLabel(f'{self.mem_data.percent}%')
+        self.fourthLineText2.setFont(self.fontDigits)
+        self.fourthLineText2.setStyleSheet('margin-top: 20%;')
+        self.fourthLineText2.setAlignment(Qt.AlignCenter)     
+
+        self.fourthLineLayout = QHBoxLayout()
+        self.fourthLineLayout.setAlignment(Qt.AlignCenter)
+        self.fourthLineLayout.addWidget(self.fourthLineText)
+        self.fourthLineLayout.addWidget(self.fourthLineText2)
+
 
         # ^ PLOTTING
         pen = pg.mkPen(color=(128, 0, 0), width=5)
@@ -138,6 +171,7 @@ margin-top: 20%;''')
         self.mainLayout.addLayout(self.firstLineLayout)
         self.mainLayout.addLayout(self.secondLineLayout)
         self.mainLayout.addLayout(self.thirdLineLayout)
+        self.mainLayout.addLayout(self.fourthLineLayout)
         self.mainLayout.addWidget(self.plotWidget)
 
         
@@ -157,8 +191,10 @@ margin-top: 20%;''')
 
 
     def update_values(self):
+        self.mem_data = psutil.virtual_memory()
         self.secondLineText2.setText(f'{(self.mem_data.used / 1024 ** 3):.3f} Gb')
         self.thirdLineText2.setText(f'{(self.mem_data.available / 1024 ** 3):.3f} Gb')
+        self.fourthLineText2.setText(f'{self.mem_data.percent}%')
 
         
 
