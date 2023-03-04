@@ -5,7 +5,7 @@ from os import system
 import pyqtgraph as pg
 import sys
 import psutil
-
+import time
 
 system('clear')
 
@@ -51,10 +51,18 @@ margin-top: 20%''')
         self.firstLineLayout.addWidget(self.firstLineText)
         self.firstLineLayout.addWidget(self.firstLineText2)
         
-        pen = pg.mkPen(color=(255, 0, 0), width=5)
-        self.plotWidget = pg.PlotWidget(background='white')
-        self.plotWidget = pg.PlotCurveItem(background='white')
-        self.plotWidget.plot([1, 2, 3], [33, 35, 22], pen=pen, fillLevel=True)
+
+        # ^ PLOTTING ===========================
+        pen = pg.mkPen(color=(128, 0, 0), width=5)
+        self.plotWidget = pg.PlotWidget(background=None)
+        self.plotWidget.setStyleSheet('''QGraphicsView {border: 4px solid maroon;}''')
+        self.plotWidget.setMouseEnabled(x=False, y=False)
+        # self.plotWidget()
+
+        self.x = [0, 1, 2]
+        self.y = [psutil.virtual_memory().percent for a in range(3)]
+
+        self.plotWidget.plot(self.x, self.y, pen=pen, fillLevel=True)
         self.plotWidget.setYRange(min=1, max=100)
         self.plotWidget.setTitle('Memory Usage Percentage')
         self.plotWidget.showGrid(x=True, y=True)
@@ -66,6 +74,9 @@ margin-top: 20%''')
         print(psutil.virtual_memory())
         print(34359738368 / 32768)
         print()
+
+    def update_graph(self):
+        pass 
         
 
 if __name__ == "__main__":
