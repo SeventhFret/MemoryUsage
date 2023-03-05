@@ -1,15 +1,9 @@
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QLabel, QPushButton, QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget
 from PySide6.QtGui import Qt, QFont, QPixmap, QIcon
-from os import system
 import pyqtgraph as pg
 import sys
 import psutil
-import time
-from stringcolor import cs
-
-system('clear')
-
 
 class MemoryUsage(QMainWindow):
     def __init__(self):
@@ -37,7 +31,6 @@ class MemoryUsage(QMainWindow):
     def initUI(self):
         self.setFixedSize(600, 600)
         self.setUpdatesEnabled(True)
-        # self.resize(600, 600)
         self.setWindowTitle('Memory Usage')
         self.setStyleSheet('''background-color: black;''')
 
@@ -202,6 +195,5 @@ if __name__ == "__main__":
     app = QApplication([])
     memUs = MemoryUsage()
     memUs.show()
-    print(cs('Program running successfully!', 'green').bold())
     sys.exit(app.exec())
     
